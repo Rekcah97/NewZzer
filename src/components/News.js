@@ -15,10 +15,12 @@ const News = (props) => {
   };
 
   const updateNews = async () => {
+    try{
     props.setProgress(10);
-    //const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=${props.apiKey}`;
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
 
+    const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=${props.apiKey}`;
+    // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+console.log(props.country, props.category, props.apiKey);
     setLoading(true);
 
     let data = await fetch(url);
@@ -27,11 +29,17 @@ const News = (props) => {
     let parsedData = await data.json();
 
     props.setProgress(50);
-    setArticle(parsedData.articles);
+    setArticle(parsedData.articles || []);
     setLoading(false);
-    setTotalResults(parsedData.totalResults);
+    setTotalResults(parsedData.totalResults || 0);
 
     props.setProgress(100);
+    }catch(error){
+       console.error(error);
+    setArticle([]);                          // ✅ NEVER undefined
+    setLoading(false);
+    }
+
   };
 
   useEffect(() => {
@@ -41,9 +49,9 @@ const News = (props) => {
   }, []);
 
   const fetchMoreData = async () => {
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`;
+    // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`;
     setPage(page + 1);
-    //const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=49a83d33f62c7cd75f017685b73cbc9d`;
+    const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=49a83d33f62c7cd75f017685b73cbc9d`;
 
     let data = await fetch(url);
 
