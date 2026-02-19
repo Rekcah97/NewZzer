@@ -15,31 +15,30 @@ const News = (props) => {
   };
 
   const updateNews = async () => {
-    try{
-    props.setProgress(10);
+    try {
+      props.setProgress(10);
 
-    const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=${props.apiKey}`;
-    // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
-console.log(props.country, props.category, props.apiKey);
-    setLoading(true);
+      const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=${props.apiKey}`;
+      // const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
 
-    let data = await fetch(url);
-    props.setProgress(30);
+      setLoading(true);
 
-    let parsedData = await data.json();
+      let data = await fetch(url);
+      props.setProgress(30);
 
-    props.setProgress(50);
-    setArticle(parsedData.articles || []);
-    setLoading(false);
-    setTotalResults(parsedData.totalResults || 0);
+      let parsedData = await data.json();
 
-    props.setProgress(100);
-    }catch(error){
-       console.error(error);
-    setArticle([]);                          // ✅ NEVER undefined
-    setLoading(false);
+      props.setProgress(50);
+      setArticle(parsedData.articles || []);
+      setLoading(false);
+      setTotalResults(parsedData.totalResults || 0);
+
+      props.setProgress(100);
+    } catch (error) {
+      console.error(error);
+      setArticle([]); // ✅ NEVER undefined
+      setLoading(false);
     }
-
   };
 
   useEffect(() => {
@@ -68,13 +67,29 @@ console.log(props.country, props.category, props.apiKey);
         Newzzer - Top {capatalizeFirstLetter(props.category)} Headline{" "}
       </h2>
       {loading && <Spinner />}
-      <InfiniteScroll dataLength={article.length} next={fetchMoreData} hasMore={article.length !== totalResults && article.length <= totalResults} loader={<Spinner />}>
+      <InfiniteScroll
+        dataLength={article.length}
+        next={fetchMoreData}
+        hasMore={
+          article.length !== totalResults && article.length <= totalResults
+        }
+        loader={<Spinner />}
+      >
         <div className="container">
           <div className="row">
             {article.map((element) => {
               return (
                 <div className="col-md-4 my-3" key={element.url}>
-                  <NewsItem key={element.id} title={element.title ? element.title : ""} source={element.source.name} author={element.author} time={element.publishedAt} description={element.description ? element.description : ""} imgUrl={element.urlToImage} newsUrl={element.url} />
+                  <NewsItem
+                    key={element.id}
+                    title={element.title ? element.title : ""}
+                    source={element.source.name}
+                    author={element.author}
+                    time={element.publishedAt}
+                    description={element.description ? element.description : ""}
+                    imgUrl={element.urlToImage}
+                    newsUrl={element.url}
+                  />
                 </div>
               );
             })}
