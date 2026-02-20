@@ -16,6 +16,8 @@ const News = (props) => {
 
   const updateNews = async () => {
     try {
+      console.log("API KEY:", props.apiKey); // ← add this
+
       props.setProgress(10);
 
       const url = `https://gnews.io/api/v4/top-headlines?country=${props.country}&category=${props.category}&max=100&apikey=${props.apiKey}`;
