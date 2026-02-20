@@ -18,7 +18,7 @@ const News = (props) => {
     try {
       props.setProgress(10);
 
-      const url = ``;
+      const url = `https://newzzer-backend.onrender.com/news?country=${props.country}&category=${props.category}`;
 
       setLoading(true);
 
@@ -48,7 +48,7 @@ const News = (props) => {
 
   const fetchMoreData = async () => {
     setPage(page + 1);
-    const url = ``;
+    const url = `https://newzzer-backend.onrender.com/news?country=${props.country}&category=${props.category}`;
 
     let data = await fetch(url);
 
