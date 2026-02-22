@@ -1,5 +1,5 @@
-// import { config } from "dotenv";
-// config();
+import { config } from "dotenv";
+config();
 
 import express from "express";
 import cors from "cors";
@@ -10,16 +10,27 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 
 const fetchData = async (req, res) => {
-  try {
-    const { country, category } = req.query;
-    const url = `https://gnews.io/api/v4/top-headlines?country=${country}&category=${category}&max=100&apikey=${process.env.NEWS_API}`;
-    const data = await fetch(url);
-    const json = await data.json();
-    console.log(json);
-    res.json(json);
-  } catch (err) {
-    return res.status(500).json({ error: "cannot fetch news" });
+  const { country, category } = req.query;
+
+  const apiKey = process.env.NEWS_API.split(",");
+
+  for (let i = 0; i < apiKey.length; i++) {
+    let key = apiKey[i];
+    try {
+      const url = `https://gnews.io/api/v4/top-headlines?country=${country}&category=${category}&max=100&apikey=${key}`;
+      const data = await fetch(url);
+      const json = await data.json();
+
+      if (data.ok && json.articles) {
+        console.log(`Using API no: ${i + 1}`);
+        return res.json(json);
+      }
+    } catch (err) {
+      console.log("Error in fetching data");
+    }
   }
+
+  return res.status(500).json({ error: "All API keys failed" });
 };
 
 app.get("/news", fetchData);
