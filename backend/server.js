@@ -38,3 +38,11 @@ app.get("/news", fetchData);
 app.listen(port, () => {
   console.log(`server startedd at port: ${port}`);
 });
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
+});
