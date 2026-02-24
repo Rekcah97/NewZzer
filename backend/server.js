@@ -1,5 +1,5 @@
-// import { config } from "dotenv";
-// config();
+import { config } from "dotenv";
+config();
 
 import express from "express";
 import cors from "cors";
@@ -13,6 +13,9 @@ const fetchData = async (req, res) => {
   const { country, category } = req.query;
 
   const apiKey = process.env.NEWS_API.split(",");
+  if (!apiKey) {
+    return res.status(500).json({ error: "NEWS_API not set in environment" });
+  }
 
   for (let i = 0; i < apiKey.length; i++) {
     let key = apiKey[i];
