@@ -24,10 +24,8 @@ const fetchData = async (req, res) => {
       const data = await fetch(url);
       const json = await data.json();
 
-      if (data.ok && json.articles) {
-        console.log(`Using API no: ${i + 1}`);
-        return res.json(json);
-      }
+      console.log(`Using API no: ${i + 1}`);
+      return res.json(json);
     } catch (err) {
       console.log("Error in fetching data");
     }
