@@ -1,5 +1,5 @@
-// import { config } from "dotenv";
-// config();
+import { config } from "dotenv";
+config();
 
 import express from "express";
 import cors from "cors";
@@ -12,7 +12,11 @@ app.use(cors());
 const fetchData = async (req, res) => {
   const { country, category } = req.query;
 
-  const apiKey = process.env.NEWS_API.split(",");
+  const rawKey = process.env.NEWS_API;
+
+  if (!rawKey) throw new Error("NEWS_API not set");
+  const apiKey = rawKey.split(",");
+
   if (!apiKey) {
     return res.status(500).json({ error: "NEWS_API not set in environment" });
   }
@@ -24,8 +28,11 @@ const fetchData = async (req, res) => {
       const data = await fetch(url);
       const json = await data.json();
 
-      console.log(`Using API no: ${i + 1}`);
-      return res.json(json);
+      console.log(`trying Using API no: ${i + 1}`);
+      if (data.ok && json.articles) {
+        console.log(`Using API no: ${i + 1}`);
+        return res.json(json);
+      }
     } catch (err) {
       console.log("Error in fetching data");
     }
@@ -36,14 +43,14 @@ const fetchData = async (req, res) => {
 
 app.get("/news", fetchData);
 
-app.listen(port, () => {
-  console.log(`server startedd at port: ${port}`);
-});
-
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "OK",
     uptime: process.uptime(),
     timestamp: Date.now(),
   });
+});
+
+app.listen(port, () => {
+  console.log(`server startedd at port: ${port}`);
 });
